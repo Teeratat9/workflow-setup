@@ -1,5 +1,5 @@
 # workflow-setup
-These are my work flow setup of neovim and kitty terminal
+These are my work flow setup of neovim and kitty terminal my setup use lazyvim from start folder of that repo
 
 # Setup Step
 1. Use zsh shell don't forgot to use zsh plugin autosuggest and highlight<br>``plugins=(	

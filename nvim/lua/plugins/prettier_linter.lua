@@ -1,5 +1,5 @@
 return {
-  -- Prettier
+  -- Prettier and ESLint via Null-LS
   {
     "jose-elias-alvarez/null-ls.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
@@ -7,14 +7,16 @@ return {
       local null_ls = require("null-ls")
       null_ls.setup({
         sources = {
-          null_ls.builtins.formatting.prettier, -- For Prettier formatting
-          null_ls.builtins.diagnostics.eslint,    -- For ESLint diagnostics
+          null_ls.builtins.formatting.prettier, -- Prettier formatting
+          null_ls.builtins.diagnostics.eslint, -- ESLint diagnostics
+          null_ls.builtins.formatting.eslint, -- ESLint formatting (optional)
         },
       })
-            -- Auto-format on save
-      vim.cmd [[
-        autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.json,*.css,*.scss,*.html lua vim.lsp.buf.formatting_sync()
-      ]]
+
+      -- Auto-format on save
+      vim.cmd([[
+        autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.json,*.css,*.scss,*.html lua vim.lsp.buf.format()
+      ]])
     end,
   },
   -- Optionally, add 'mason.nvim' and 'mason-lspconfig.nvim' for automatic installation of tools
@@ -33,5 +35,7 @@ return {
       })
     end,
   },
+  {
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+  },
 }
-

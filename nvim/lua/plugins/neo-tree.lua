@@ -12,6 +12,13 @@ return {
           visible = true,  -- Show hidden files
         },
       },
+      view = {
+        mappings = {
+            list = {
+                { key = "y", action = "copy_absolute_path" }, -- `y` to copy the absolute file path
+            }
+        }
+      }
     })
   end,
 }

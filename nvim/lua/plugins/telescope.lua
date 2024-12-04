@@ -8,8 +8,7 @@ return {
         file_ignore_patterns = { "node_modules" },
       },
     })
-       -- Key mapping for live grep
-    vim.api.nvim_set_keymap('n', '<leader>ff', ':Telescope live_grep<CR>', { noremap = true, silent = true })
+    -- Key mapping for live grep
+    vim.api.nvim_set_keymap("n", "<leader>ff", ":Telescope live_grep<CR>", { noremap = true, silent = true })
   end,
 }
-

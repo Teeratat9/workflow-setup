@@ -1,0 +1,840 @@
+<title>Neovim Daily Driver</title>
+<style>
+  :root {
+    --paper:      #F3F5F2;
+    --surface:    #FFFFFF;
+    --ink:        #171C18;
+    --muted:      #5E6A62;
+    --faint:      #8A958C;
+    --rule:       #DDE3DC;
+    --accent:     #2F6B43;
+    --accent-dim: #E3EDE5;
+    --warn:       #8A5A1C;
+    --warn-dim:   #F4EADB;
+    --key-face:   #FFFFFF;
+    --key-edge:   #C8D0C7;
+    --key-ink:    #26302A;
+
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+            "Noto Sans Thai", "Sarabun", sans-serif;
+
+    --measure: 72ch;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #131714;
+      --surface:    #1A1F1B;
+      --ink:        #E3E9E3;
+      --muted:      #9AA79D;
+      --faint:      #6F7C73;
+      --rule:       #2A322C;
+      --accent:     #7FBE8C;
+      --accent-dim: #1E2A21;
+      --warn:       #D2A265;
+      --warn-dim:   #2A2218;
+      --key-face:   #232A25;
+      --key-edge:   #39443B;
+      --key-ink:    #D6DED7;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:      #131714;
+    --surface:    #1A1F1B;
+    --ink:        #E3E9E3;
+    --muted:      #9AA79D;
+    --faint:      #6F7C73;
+    --rule:       #2A322C;
+    --accent:     #7FBE8C;
+    --accent-dim: #1E2A21;
+    --warn:       #D2A265;
+    --warn-dim:   #2A2218;
+    --key-face:   #232A25;
+    --key-edge:   #39443B;
+    --key-ink:    #D6DED7;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 28px 120px;
+  }
+
+  /* ---------- masthead ---------- */
+
+  header {
+    padding: 72px 0 40px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    max-width: var(--measure);
+    color: var(--muted);
+    font-size: 17px;
+    margin: 0;
+  }
+
+  /* ---------- install status strip ---------- */
+
+  .status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 36px 0 0;
+  }
+
+  .status div {
+    background: var(--surface);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .status dt {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .status dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- sections ---------- */
+
+  section { padding-top: 60px; }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: var(--measure);
+    color: var(--muted);
+    margin: 14px 0 28px;
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 34px 0 12px;
+    font-weight: 600;
+  }
+
+  p { max-width: var(--measure); }
+
+  /* ---------- keys ---------- */
+
+  kbd {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    padding: 1px 6px;
+    background: var(--key-face);
+    color: var(--key-ink);
+    border: 1px solid var(--key-edge);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background: var(--accent-dim);
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ---------- grammar builder ---------- */
+
+  .grammar {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 26px;
+    margin: 4px 0 30px;
+    overflow-x: auto;
+  }
+
+  .formula {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    font-family: var(--mono);
+    min-width: 400px;
+  }
+
+  .slot {
+    flex: 1;
+    border: 1px dashed var(--key-edge);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .slot .label {
+    font-size: 10.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .slot .val {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .slot .hint {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--sans);
+    line-height: 1.4;
+  }
+
+  .plus {
+    align-self: center;
+    color: var(--faint);
+    font-family: var(--mono);
+    font-size: 18px;
+  }
+
+  .examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .examples div {
+    background: var(--surface);
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .examples .ex-key {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .examples .ex-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  /* ---------- keymap tables ---------- */
+
+  .maps {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 18px;
+    padding: 9px 16px;
+    align-items: baseline;
+    border-top: 1px solid var(--rule);
+  }
+
+  .row:first-child { border-top: none; }
+
+  .row .d {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .row .d strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  @media (max-width: 620px) {
+    .row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* ---------- learning path ---------- */
+
+  ol.path {
+    list-style: none;
+    counter-reset: lvl;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  ol.path > li {
+    counter-increment: lvl;
+    background: var(--surface);
+    padding: 22px 24px 24px 64px;
+    position: relative;
+  }
+
+  ol.path > li::before {
+    content: counter(lvl, decimal-leading-zero);
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  ol.path h4 {
+    font-family: var(--mono);
+    font-size: 15px;
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+
+  ol.path .when {
+    font-size: 12.5px;
+    font-family: var(--mono);
+    color: var(--faint);
+    margin: 0 0 12px;
+  }
+
+  ol.path p { margin: 0 0 10px; font-size: 14.5px; }
+  ol.path p:last-child { margin-bottom: 0; }
+
+  /* ---------- callouts ---------- */
+
+  .note {
+    border-left: 3px solid var(--warn);
+    background: var(--warn-dim);
+    padding: 14px 18px;
+    margin: 22px 0;
+    font-size: 14.5px;
+    max-width: var(--measure);
+  }
+
+  .note strong {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warn);
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .note p { margin: 0; max-width: none; }
+  .note p + p { margin-top: 8px; }
+
+  /* ---------- command list ---------- */
+
+  dl.cmds {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 9px 22px;
+    margin: 0;
+    align-items: baseline;
+  }
+
+  dl.cmds dt {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  dl.cmds dd {
+    margin: 0;
+    font-size: 14.5px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 620px) {
+    dl.cmds { grid-template-columns: 1fr; gap: 2px 0; }
+    dl.cmds dd { margin-bottom: 10px; }
+  }
+
+  footer {
+    margin-top: 72px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    font-size: 13.5px;
+    color: var(--faint);
+    font-family: var(--mono);
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible, kbd:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">LazyVim 16.0.1 · Neovim 0.12.2 · ~/workflow-setup/nvim</p>
+    <h1>Neovim Daily Driver</h1>
+    <p class="standfirst">
+      คู่มือสำหรับ setup ที่เพิ่งติดตั้งบนเครื่องนี้ — ทุก keymap ในหน้านี้
+      ดึงมาจาก install จริงของคุณ ไม่ได้คัดลอกจาก tutorial
+      ดังนั้นมันตรงกับที่กดแล้วทำงานจริง
+    </p>
+
+    <dl class="status">
+      <div><dt>Picker</dt><dd>snacks</dd></div>
+      <div><dt>Completion</dt><dd>blink.cmp</dd></div>
+      <div><dt>Plugins</dt><dd>39</dd></div>
+      <div><dt>Startup</dt><dd>24 ms</dd></div>
+      <div><dt>LSP servers</dt><dd>9</dd></div>
+    </dl>
+  </header>
+
+  <section>
+    <h2>อย่าท่อง keymap — เรียน "ไวยากรณ์" ตัวเดียวพอ</h2>
+    <p class="lede">
+      คนที่ใช้ Vim ไม่เก่งคือคนที่ท่องคำสั่งเป็นตัว ๆ
+      คนที่ใช้เก่งรู้ว่ามันคือภาษาที่ประกอบขึ้นเองได้
+      คุณเรียน 3 ช่องนี้ครั้งเดียว แล้วสร้างคำสั่งได้เป็นร้อยแบบ
+    </p>
+
+    <div class="grammar">
+      <div class="formula">
+        <div class="slot">
+          <span class="label">Verb — ทำอะไร</span>
+          <span class="val">d c y v &gt; =</span>
+          <span class="hint">delete, change, yank, visual, indent, format</span>
+        </div>
+        <span class="plus">+</span>
+        <div class="slot">
+          <span class="label">Count — กี่ครั้ง</span>
+          <span class="val">2 3 4 …</span>
+          <span class="hint">ข้ามได้ ถ้าทำครั้งเดียว</span>
+        </div>
+        <span class="plus">+</span>
+        <div class="slot">
+          <span class="label">Motion — ตรงไหน</span>
+          <span class="val">w } ip i" t,</span>
+          <span class="hint">word, paragraph, inner-para, in-quotes, till-comma</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="examples">
+      <div>
+        <span class="ex-key">ciw</span>
+        <span class="ex-desc"><em>change inner word</em> — ลบคำที่เคอร์เซอร์อยู่แล้วเข้า insert mode ทันที</span>
+      </div>
+      <div>
+        <span class="ex-key">ci"</span>
+        <span class="ex-desc">แก้ข้อความใน quote โดยไม่ต้องเล็งหัวท้าย เคอร์เซอร์อยู่ตรงไหนใน quote ก็ได้</span>
+      </div>
+      <div>
+        <span class="ex-key">da(</span>
+        <span class="ex-desc">ลบทั้งวงเล็บและของข้างใน — <em>a</em> = around, <em>i</em> = inner</span>
+      </div>
+      <div>
+        <span class="ex-key">d2}</span>
+        <span class="ex-desc">ลบ 2 ย่อหน้าถัดไป — count เสียบตรงกลางได้เสมอ</span>
+      </div>
+      <div>
+        <span class="ex-key">ct,</span>
+        <span class="ex-desc">แก้ตั้งแต่ตรงนี้จนถึงก่อน comma ตัวถัดไป</span>
+      </div>
+      <div>
+        <span class="ex-key">yi{</span>
+        <span class="ex-desc">copy ทุกอย่างใน <code>{ }</code> — ใช้บ่อยมากกับ object/function body</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>ทางลัดที่ได้ผลจริง</strong>
+      <p>
+        ถ้าจะจำอย่างเดียว จำ <kbd>ciw</kbd> กับ <kbd>ci"</kbd> ให้ติดมือก่อน
+        แค่สองตัวนี้ก็กินงานแก้โค้ดไปแล้วเกินครึ่ง
+        แล้วค่อย ๆ เติม motion ใหม่ทีละตัวต่อสัปดาห์ — อย่าพยายามจำทั้งตารางรวดเดียว
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Keymap ที่ใช้จริงทุกวัน</h2>
+    <p class="lede">
+      <kbd>Space</kbd> คือ leader key กดแล้วรอสักครู่ which-key
+      จะเด้งเมนูขึ้นมาบอกว่ากดอะไรต่อได้บ้าง — ไม่ต้องจำ ให้มันบอก
+    </p>
+
+    <h3>หาไฟล์ / หาข้อความ</h3>
+    <div class="maps">
+      <div class="row"><kbd>Space</kbd><span class="d"><strong>Find Files</strong> — กด space สองที กดเร็วสุด ใช้บ่อยสุด</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>/</kbd><span class="d"><strong>Grep</strong> ทั้งโปรเจกต์ — หาข้อความ ไม่ใช่ชื่อไฟล์</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>,</kbd><span class="d">สลับ buffer ที่เปิดค้างอยู่</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>`</kbd><span class="d">เด้งกลับไฟล์ก่อนหน้า — สลับไปมา 2 ไฟล์เร็วมาก</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>f</kbd> <kbd>r</kbd><span class="d">ไฟล์ที่เพิ่งเปิดล่าสุด (recent)</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>f</kbd> <kbd>p</kbd><span class="d">สลับโปรเจกต์</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>s</kbd> <kbd>R</kbd><span class="d">Resume — เปิดผลค้นหาครั้งล่าสุดกลับมา</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>e</kbd><span class="d">Explorer (ต้นไม้ไฟล์) — snacks explorer</span></div>
+    </div>
+
+    <h3>อ่านและแก้โค้ดผ่าน LSP</h3>
+    <div class="maps">
+      <div class="row"><kbd>g</kbd> <kbd>d</kbd><span class="d"><strong>Goto Definition</strong> — กระโดดไปที่นิยาม</span></div>
+      <div class="row"><kbd>Ctrl</kbd> <kbd>o</kbd><span class="d">กระโดด<em>กลับ</em>ที่เดิม — คู่กับ <kbd>gd</kbd> เสมอ</span></div>
+      <div class="row"><kbd>g</kbd> <kbd>r</kbd><span class="d">References — ใครเรียกตัวนี้บ้าง</span></div>
+      <div class="row"><kbd>K</kbd><span class="d">Hover — ดู type / doc ตรงเคอร์เซอร์</span></div>
+      <div class="row"><kbd>g</kbd> <kbd>y</kbd><span class="d">ไปที่ type definition</span></div>
+      <div class="row"><kbd>g</kbd> <kbd>I</kbd><span class="d">ไปที่ implementation</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>a</kbd><span class="d"><strong>Code Action</strong> — quick fix, import อัตโนมัติ, refactor</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>r</kbd><span class="d">Rename symbol ทั้งโปรเจกต์</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>f</kbd><span class="d">Format ไฟล์ (prettier / stylua / ruff)</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>d</kbd><span class="d">อ่าน error บรรทัดนี้แบบเต็ม ๆ</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>s</kbd> <kbd>s</kbd><span class="d">Symbol ในไฟล์ — กระโดดหา function/class</span></div>
+    </div>
+
+    <h3>TypeScript โดยเฉพาะ</h3>
+    <div class="maps">
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>M</kbd><span class="d">เติม import ที่ขาดทั้งไฟล์รวดเดียว</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>o</kbd><span class="d">Organize imports</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>D</kbd><span class="d">Fix all diagnostics ในไฟล์</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>c</kbd> <kbd>V</kbd><span class="d">เลือก TS version ของ workspace (กรณี monorepo)</span></div>
+      <div class="row"><kbd>g</kbd> <kbd>D</kbd><span class="d">Goto <em>source</em> definition — ข้าม <code>.d.ts</code> ไปโค้ดจริง</span></div>
+    </div>
+
+    <h3>Git</h3>
+    <div class="maps">
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>g</kbd><span class="d"><strong>Lazygit</strong> — stage, commit, rebase ครบในตัว</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>b</kbd><span class="d">Blame บรรทัดนี้ — ใครแก้ ตอนไหน</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>f</kbd><span class="d">ประวัติ commit ของไฟล์นี้</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>d</kbd><span class="d">ดู diff เป็น hunk</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>B</kbd><span class="d">เปิดไฟล์/บรรทัดนี้บน GitHub</span></div>
+    </div>
+
+    <h3>เคลื่อนที่และจัดหน้าต่าง</h3>
+    <div class="maps">
+      <div class="row"><kbd>s</kbd><span class="d"><strong>Flash</strong> — พิมพ์ 2 ตัวอักษรแล้วกระโดดไปจุดไหนก็ได้บนจอ</span></div>
+      <div class="row"><kbd>Ctrl</kbd> <kbd>h/j/k/l</kbd><span class="d">ย้ายไป window ซ้าย/ล่าง/บน/ขวา</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>-</kbd><span class="d">แบ่งจอแนวนอน</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>|</kbd><span class="d">แบ่งจอแนวตั้ง</span></div>
+      <div class="row"><kbd>Ctrl</kbd> <kbd>/</kbd><span class="d">เปิด terminal ลอย — กดซ้ำเพื่อปิด</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>b</kbd> <kbd>d</kbd><span class="d">ปิด buffer นี้ (ไม่ปิดหน้าต่าง)</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>x</kbd> <kbd>x</kbd><span class="d">Trouble — รวม error ทั้งโปรเจกต์ไว้ที่เดียว</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>s</kbd> <kbd>r</kbd><span class="d">Search &amp; replace ทั้งโปรเจกต์ (grug-far)</span></div>
+    </div>
+
+    <div class="note">
+      <strong>ลืม keymap ทำไง</strong>
+      <p>
+        กด <kbd>Space</kbd> แล้วหยุด — which-key จะโชว์ทุกทางเลือก
+        หรือกด <kbd>Space</kbd> <kbd>?</kbd> เพื่อดู keymap ทั้งหมดของ buffer ปัจจุบัน
+        คุณไม่จำเป็นต้องท่องตารางนี้เลย
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>ลำดับการฝึก 4 ขั้น</h2>
+    <p class="lede">
+      ข้อผิดพลาดที่คนส่วนใหญ่ทำคือกระโดดไปขั้น 3 เลยแล้วล้มเลิกใน 2 สัปดาห์
+      ทำตามลำดับ แล้วอย่าข้าม — แต่ละขั้นสร้างกล้ามเนื้อความจำที่ขั้นถัดไปต้องใช้
+    </p>
+
+    <ol class="path">
+      <li>
+        <h4>ห้ามใช้ปุ่มลูกศร</h4>
+        <p class="when">สัปดาห์ที่ 1 — อย่างอื่นยังไม่ต้องสนใจ</p>
+        <p>
+          บังคับตัวเองใช้ <kbd>h</kbd> <kbd>j</kbd> <kbd>k</kbd> <kbd>l</kbd> อย่างเดียว
+          และเพิ่ม <kbd>w</kbd> <kbd>b</kbd> (ข้ามคำ) <kbd>0</kbd> <kbd>$</kbd> (หัว/ท้ายบรรทัด)
+          <kbd>gg</kbd> <kbd>G</kbd> (หัว/ท้ายไฟล์)
+        </p>
+        <p>
+          ช่วงนี้คุณจะช้าลงกว่า VS Code มาก — นั่นปกติและจำเป็น
+          อย่าเพิ่งเอา Neovim ไปทำงานที่มี deadline
+        </p>
+      </li>
+      <li>
+        <h4>เริ่มประกอบ verb + motion</h4>
+        <p class="when">สัปดาห์ที่ 2–3</p>
+        <p>
+          เอาตารางไวยากรณ์ด้านบนมาใช้จริง เริ่มที่ <kbd>ciw</kbd> <kbd>ci"</kbd> <kbd>ci{</kbd>
+          แล้วค่อยเติม <kbd>da(</kbd> <kbd>yi[</kbd>
+        </p>
+        <p>
+          กฎข้อเดียว: เวลาจะแก้อะไร หยุดคิดสักวินาทีว่า
+          "มี motion ที่ตรงกับสิ่งที่ตาเห็นไหม" ก่อนจะกด <kbd>x</kbd> รัว ๆ
+        </p>
+      </li>
+      <li>
+        <h4>ใช้ LSP แทนการอ่านโค้ดด้วยตา</h4>
+        <p class="when">เดือนที่ 2 — ตรงนี้เริ่มเร็วกว่า VS Code</p>
+        <p>
+          <kbd>gd</kbd> เข้าไปดู แล้ว <kbd>Ctrl</kbd> <kbd>o</kbd> เด้งกลับ
+          ทำวนแบบนี้จนเป็นนิสัย มันคือวิธีอ่าน codebase ที่ไม่รู้จัก
+        </p>
+        <p>
+          เลิกแก้ import ด้วยมือ — ใช้ <kbd>Space</kbd> <kbd>c</kbd> <kbd>a</kbd> กับ
+          <kbd>Space</kbd> <kbd>c</kbd> <kbd>M</kbd> แทน
+        </p>
+      </li>
+      <li>
+        <h4>ปรับ config ตามที่เจ็บจริง</h4>
+        <p class="when">เดือนที่ 3 เป็นต้นไป</p>
+        <p>
+          อย่าแต่ง config ก่อนถึงขั้นนี้ — คุณจะไม่รู้ว่าอะไรควรแก้
+          เมื่อเจออะไรที่ขัดใจซ้ำ ๆ ค่อยเพิ่มไฟล์ใน
+          <code>~/workflow-setup/nvim/lua/plugins/</code>
+        </p>
+        <p>
+          อยากได้ภาษาเพิ่ม (Dart/Flutter, Go, Rust) ใช้ <code>:LazyExtras</code>
+          เลือกแล้วกด <kbd>x</kbd> — ไม่ต้องเขียน config เอง
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>ข้อควรรู้เฉพาะเครื่องนี้</h2>
+    <p class="lede">
+      สามเรื่องนี้ต่างจาก tutorial ทั่วไปในเน็ต ถ้าไม่รู้จะงงว่าทำไมทำตามแล้วไม่ตรง
+    </p>
+
+    <div class="note">
+      <strong>1 · ไม่ได้ใช้ Telescope และ neo-tree</strong>
+      <p>
+        LazyVim 16 เปลี่ยนมาใช้ <code>snacks.nvim</code> เป็นทั้ง picker และ explorer แล้ว
+        บทความเก่า ๆ ที่สอน <code>:Telescope find_files</code> หรือ <code>:Neotree</code>
+        จะใช้ไม่ได้ — แต่ keymap อย่าง <kbd>Space</kbd> <kbd>f</kbd> <kbd>f</kbd> ยังเหมือนเดิม
+        เพราะ LazyVim รักษา keymap ไว้แม้เปลี่ยน plugin ข้างใน
+      </p>
+    </div>
+
+    <div class="note">
+      <strong>2 · Python LSP ไม่ได้ลงผ่าน Mason</strong>
+      <p>
+        <code>pyenv global</code> ของคุณชี้ไปที่ Python 3.5.10 ซึ่ง EOL ตั้งแต่ปี 2020
+        และเก่าเกินกว่าที่ basedpyright รองรับ Mason จึงติดตั้งไม่สำเร็จ
+      </p>
+      <p>
+        ทางแก้ที่ใช้คือ <code>uv tool install basedpyright</code>
+        ซึ่ง uv พก Python ของตัวเองมา ไม่แตะ pyenv เลย
+        แล้วบอก LazyVim ด้วย <code>basedpyright = { mason = false }</code>
+        ใน <code>lua/plugins/python.lua</code>
+      </p>
+    </div>
+
+    <div class="note">
+      <strong>3 · Completion คือ blink.cmp ไม่ใช่ nvim-cmp</strong>
+      <p>
+        <kbd>Tab</kbd> เลื่อนตัวเลือก <kbd>Enter</kbd> ยืนยัน <kbd>Ctrl</kbd> <kbd>Space</kbd> เรียกเมนูขึ้นมาเอง
+        ถ้าไปก๊อป config nvim-cmp จากเน็ตมาใส่ มันจะไม่ทำงาน (config เดิมของคุณเป็นแบบนั้นพอดี)
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Render: mermaid, HTML, markdown</h2>
+    <p class="lede">
+      มีสองทางเสมอ — วาดในเทอร์มินัลเลย หรือเปิด browser คู่ไปด้วย
+      ทางแรกเร็วกว่าและไม่ต้องสลับหน้าต่าง ทางที่สองชัวร์กว่าและเห็นผลเหมือนที่คนอื่นเห็น
+    </p>
+
+    <h3>ในเทอร์มินัล (snacks.image)</h3>
+    <div class="maps">
+      <div class="row"><span class="d" style="grid-column:1/-1">
+        เปิดไฟล์ <code>.md</code> ที่มี <code>```mermaid</code> แล้วภาพจะขึ้นแทนที่ code block เอง
+        ไม่ต้องกดอะไร — snacks เรียก <code>mmdc</code> แปลงเป็น PNG แล้วส่งผ่าน kitty graphics protocol
+      </span></div>
+      <div class="row"><span class="d" style="grid-column:1/-1">
+        ใช้ได้กับรูปปกติด้วย — <code>![alt](./shot.png)</code> ใน markdown จะเรนเดอร์ inline เหมือนกัน
+      </span></div>
+    </div>
+
+    <h3>ใน browser (live-preview.nvim)</h3>
+    <div class="maps">
+      <div class="row"><kbd>Space</kbd> <kbd>m</kbd> <kbd>p</kbd><span class="d"><strong>Live Preview</strong> — เปิด browser พร้อม auto-reload ตอนเซฟ ใช้ได้ทั้ง <code>.html</code> และ <code>.md</code></span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>m</kbd> <kbd>x</kbd><span class="d">ปิด preview server</span></div>
+      <div class="row"><code>:MarkdownPreview</code><span class="d">อีกตัวเลือกสำหรับ markdown โดยเฉพาะ — sync scroll ดีกว่า</span></div>
+    </div>
+
+    <h3>markdown ในบัฟเฟอร์ (render-markdown.nvim)</h3>
+    <p>
+      ทำงานอัตโนมัติอยู่แล้วตั้งแต่เปิดไฟล์ — หัวข้อมีพื้นหลัง, bullet เป็นสัญลักษณ์,
+      code block มีกรอบ, ตารางจัดคอลัมน์ให้ ไม่ต้องสั่งอะไร
+      ถ้าอยากเห็น markdown ดิบ ๆ ชั่วคราวใช้ <code>:RenderMarkdown toggle</code>
+    </p>
+
+    <div class="note">
+      <strong>ข้อจำกัดที่ต้องรู้</strong>
+      <p>
+        Warp รองรับ kitty graphics protocol แต่มันไม่ประกาศตัวว่าเป็น kitty
+        snacks เลยตรวจไม่เจอ — แก้ด้วย <code>force = true</code> ใน
+        <code>lua/plugins/image.lua</code> ซึ่งข้ามการตรวจไปเลย
+      </p>
+      <p>
+        และ <code>mmdc</code> จาก Homebrew ไม่ได้แถม Chromium มาด้วย
+        เลยต้องชี้ <code>PUPPETEER_EXECUTABLE_PATH</code> ไปที่ Chrome ในเครื่อง
+        (ตั้งไว้ใน <code>lua/config/options.lua</code> แล้ว)
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>ตรวจ git diff</h2>
+    <p class="lede">
+      สามชั้น ใช้คนละจังหวะกัน — ระหว่างพิมพ์, ตอนจะ commit, ตอนจะ review ทั้ง branch
+    </p>
+
+    <h3>ระหว่างพิมพ์ — gitsigns</h3>
+    <div class="maps">
+      <div class="row"><kbd>]</kbd> <kbd>h</kbd><span class="d">ไป hunk ถัดไป</span></div>
+      <div class="row"><kbd>[</kbd> <kbd>h</kbd><span class="d">ไป hunk ก่อนหน้า</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>b</kbd><span class="d">Blame บรรทัดนี้</span></div>
+    </div>
+
+    <h3>ตอน commit — lazygit</h3>
+    <div class="maps">
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>g</kbd><span class="d">stage ทีละ hunk, commit, rebase — ครบในตัว</span></div>
+    </div>
+
+    <h3>ตอน review — diffview</h3>
+    <div class="maps">
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>v</kbd><span class="d"><strong>Diffview</strong> — diff แบบ side-by-side พร้อม panel รายชื่อไฟล์</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>m</kbd><span class="d">diff เทียบกับ <code>origin/HEAD</code> — ดูว่า branch นี้เปลี่ยนอะไรบ้าง ก่อนเปิด PR</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>h</kbd><span class="d">ประวัติการแก้ไฟล์นี้ ไล่ดูทีละ commit</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>H</kbd><span class="d">ประวัติทั้ง branch</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>V</kbd><span class="d">ปิด diffview</span></div>
+    </div>
+
+    <p>
+      ใน diffview กด <kbd>Tab</kbd> ไปไฟล์ถัดไป <kbd>Space</kbd> <kbd>e</kbd> เปิด/ปิด panel รายชื่อไฟล์
+      และ <kbd>g</kbd> <kbd>?</kbd> ดู keymap ทั้งหมดของหน้านั้น
+    </p>
+
+    <h3>ดู commit graph</h3>
+    <div class="maps">
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>a</kbd><span class="d"><code>git log --graph --oneline</code> ของ branch ปัจจุบัน — ผลลัพธ์เหมือนใน shell เป๊ะ เปิดเป็นหน้าต่างลอย</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>A</kbd><span class="d">แบบเดียวกันแต่ <code>--all</code> — เห็นทุก branch พร้อมกัน</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>t</kbd><span class="d"><strong>Git Graph แบบ interactive</strong> — กด <kbd>Enter</kbd> บน commit เพื่อเปิด diff ของ commit นั้น</span></div>
+      <div class="row"><kbd>Space</kbd> <kbd>g</kbd> <kbd>l</kbd><span class="d">Git Log แบบ picker — ค้นหา commit ด้วยการพิมพ์</span></div>
+    </div>
+
+    <p>
+      สามตัวนี้ตอบคนละคำถาม — <kbd>ga</kbd> ไว้เหลือบดูเร็ว ๆ ว่า history หน้าตาเป็นยังไง
+      <kbd>gt</kbd> ไว้ไล่ดูว่าแต่ละ commit แก้อะไร (กด <kbd>Enter</kbd> เด้งเข้า diffview เลย
+      หรือ mark สอง commit เพื่อ diff เป็นช่วง) ส่วน <kbd>gl</kbd> ไว้หา commit ที่จำ
+      message ได้ลาง ๆ
+    </p>
+  </section>
+
+  <section>
+    <h2>คำสั่งดูแลรักษา</h2>
+    <p class="lede">พิมพ์ใน normal mode ได้เลย ไม่ต้องจำหมด จำ 3 ตัวแรกพอ</p>
+
+    <dl class="cmds">
+      <dt>:Lazy</dt>
+      <dd>จัดการ plugin — กด <kbd>U</kbd> เพื่ออัปเดตทั้งหมด, <kbd>x</kbd> ลบของที่ไม่ใช้แล้ว</dd>
+
+      <dt>:LazyExtras</dt>
+      <dd>เปิด/ปิดชุดภาษาและ feature — เลื่อนไปที่บรรทัดแล้วกด <kbd>x</kbd></dd>
+
+      <dt>:Mason</dt>
+      <dd>จัดการ LSP server และ formatter ที่ติดตั้ง</dd>
+
+      <dt>:checkhealth</dt>
+      <dd>ตรวจว่าอะไรพัง — รันเมื่อมีอะไรไม่ทำงานตามคาด</dd>
+
+      <dt>:LspInfo</dt>
+      <dd>ดูว่า LSP ตัวไหน attach กับไฟล์นี้อยู่ (หรือกด <kbd>Space</kbd> <kbd>c</kbd> <kbd>l</kbd>)</dd>
+
+      <dt>:Lazy profile</dt>
+      <dd>ดูว่า plugin ตัวไหนทำให้เปิดช้า</dd>
+
+      <dt>:Tutor</dt>
+      <dd>บทเรียน Vim ในตัว ~30 นาที — คุ้มมากถ้ายังไม่เคยเล่นจบ</dd>
+    </dl>
+
+    <div class="note">
+      <strong>ถ้าพังหนัก</strong>
+      <p>
+        config อยู่ใน git อยู่แล้ว (<code>Teeratat9/workflow-setup</code>)
+        ย้อนได้ด้วย <code>git checkout -- nvim/</code>
+      </p>
+      <p>
+        ถ้าอยากกลับไป config ตัวเก่าทั้งชุด มันอยู่ที่
+        <code>~/nvim-backup-20260921-222531/config-nvim-real/</code>
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    ทุก keymap ในหน้านี้ดึงจาก nvim_get_keymap ของ install จริง · 21 ก.ย. 2026
+  </footer>
+
+</div>

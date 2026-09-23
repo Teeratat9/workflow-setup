@@ -827,8 +827,9 @@
         ย้อนได้ด้วย <code>git checkout -- nvim/</code>
       </p>
       <p>
-        ถ้าอยากกลับไป config ตัวเก่าทั้งชุด มันอยู่ที่
-        <code>~/nvim-backup-20260921-222531/config-nvim-real/</code>
+        ถ้าพังจนเปิดไม่ขึ้นจริง ๆ ลบ state ทิ้งแล้วให้ lazy.nvim bootstrap ใหม่
+        ตัว config ไม่หายเพราะอยู่ใน git — <code>rm -rf ~/.local/share/nvim
+        ~/.local/state/nvim ~/.cache/nvim</code> แล้วเปิด <code>nvim</code> ใหม่
       </p>
     </div>
   </section>
